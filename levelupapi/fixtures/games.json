@@ -1,0 +1,24 @@
+[
+    {
+        "model": "levelupapi.games",
+        "pk": 1,
+        "fields": {
+            "title": "Checkers",
+            "game_type": 1,
+            "number_of_players": 2,
+            "gamer": 1,
+            "description": "The players take turns moving their pieces. Players move their pieces diagonally from one square to another square. When a player jumps over their opponent's (the other player's) piece, you take that piece from the board."
+        }
+    },
+    {
+        "model": "levelupapi.games",
+        "pk": 2,
+        "fields": {
+            "title": "Chess",
+            "game_type": 1,
+            "number_of_players": 2,
+            "gamer": 1,
+            "description": "Chess is a recreational and competitive board game played between two players."
+        }
+    }
+]
