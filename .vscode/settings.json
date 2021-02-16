@@ -6,5 +6,6 @@
             "name": "Level Up",
             "database": "db.sqlite3"
         }
-    ]
+    ],
+    "python.pythonPath": "/Users/williambishop/.local/share/virtualenvs/nss-level-up-3VjsUYEy/bin/python"
 }
