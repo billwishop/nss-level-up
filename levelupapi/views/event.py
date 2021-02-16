@@ -92,6 +92,16 @@ class Events(ViewSet):
             Response -- JSON serialized list of events
         """
         events = Event.objects.all()
+        gamer = Gamer.objects.get(user=request.auth.user)
+
+        # Set the `joined` property on every event
+        for event in events:
+            
+            try:
+                EventGamer.objects.get(event=event, gamer=gamer)
+                event.joined = True
+            except EventGamer.DoesNotExist:
+                event.joined = False
 
         # Support filtering events by game
         game = self.request.query_params.get('gameId', None)
@@ -186,7 +196,8 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = ('id', 'game', 'scheduler',
-                    'location', 'event_time')
+                    'location', 'event_time',
+                    'joined')
                     
 class GameSerializer(serializers.ModelSerializer):
     """JSON serializer for games"""
