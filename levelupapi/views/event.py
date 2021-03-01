@@ -31,7 +31,7 @@ class Events(ViewSet):
         try:
             event.save()
             serializer = EventSerializer(event, context={'request': request})
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as ex:
             return Response({"reason": ex.message}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -47,7 +47,7 @@ class Events(ViewSet):
             serializer = EventSerializer(event, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
-            return HttpResponseServerError(ex)
+            return HttpResponseServerError(ex, status=status.HTTP_404_NOT_FOUND)
 
     def update(self, request, pk=None):
         """Handle PUT requests for an event
@@ -75,7 +75,7 @@ class Events(ViewSet):
         """
         try:
             event = Event.objects.get(pk=pk)
-            event.delete
+            event.delete()
 
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
@@ -178,7 +178,7 @@ class EventUserSerializer(serializers.ModelSerializer):
     """JSON serializer for event organizer's related Django user"""
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['id', 'first_name', 'last_name', 'email']
 
 class EventGamerSerializer(serializers.ModelSerializer):
     """JSON serializer for event organizer"""
