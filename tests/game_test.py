@@ -68,3 +68,90 @@ class GameTests(APITestCase):
         self.assertEqual(json_response["number_of_players"], 2)
         self.assertEqual(json_response["gamer"]["id"], 1)
         self.assertEqual(json_response["description"], "Swell boardgame")
+
+    def test_get_game(self):
+        """
+        Ensure we can get an existing game.
+        """
+
+        # Seed the database with a game
+        game = Game()
+        game.title = "Checkers"
+        game.gametype_id = 1
+        game.number_of_players = 2
+        game.gamer_id = 1
+        game.description = "Great game"
+        game.save()
+
+        # Make sure request is authenticated
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+
+        # Initiate request and store response
+        response = self.client.get(f"/games/{game.id}")
+
+        # Parse the JSON in the response body
+        json_response = json.loads(response.content)
+
+        # Assert that the game was retrieved
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Assert that the values are correct
+        self.assertEqual(json_response["title"], "Checkers")
+        self.assertEqual(json_response["description"], "Great game")
+
+    def test_change_game(self):
+        """
+        Ensure we can change an existing game
+        """
+        game = Game()
+        game.title = "Checkers"
+        game.gametype_id = 1
+        game.number_of_players = 2
+        game.gamer_id = 1
+        game.description = "Great game"
+        game.save()
+
+        # Define new properties for game
+        data = {
+            "title": "Checkers!",
+            "gameTypeId": 1,
+            "numberOfPlayers": 2,
+            "gamer": 1,
+            "description": "Swell boardgame"
+        }
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.put(f"/games/{game.id}", data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # GET game again to verify changes
+        response = self.client.get(f"/games/{game.id}")
+        json_response = json.loads(response.content)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Assert that the properties are correct
+        self.assertEqual(json_response["title"], "Checkers!")
+        self.assertEqual(json_response["gametype"]["id"], 1)
+        self.assertEqual(json_response["number_of_players"], 2)
+        self.assertEqual(json_response["gamer"]["id"], 1)
+        self.assertEqual(json_response["description"], "Swell boardgame")
+
+    def test_delete_game(self):
+        """
+        Ensure we can delete an existing game.
+        """
+        game = Game()
+        game.title = "Checkers"
+        game.gametype_id = 1
+        game.number_of_players = 2
+        game.gamer_id = 1
+        game.description = "Great game"
+        game.save()
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.delete(f"/games/{game.id}")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # GET game again to verify 404 response
+        response = self.client.get(f"/games/{game.id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
