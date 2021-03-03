@@ -12,6 +12,7 @@ router.register(r'events', Events, 'event')
 router.register(r'profile', Profile, 'profile')
 
 urlpatterns = [
+    path('', include('levelupreports.urls')),
     path('', include(router.urls)),
     path('register', register_user),
     path('login', login_user),
